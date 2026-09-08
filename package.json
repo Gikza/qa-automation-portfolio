@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:postman": "newman run postman/collection.json -e postman/environment.json --reporters cli,htmlextra --reporter-htmlextra-export postman/report/report.html"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -11,6 +13,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
-    "@types/node": "^26.5.0"
+    "@types/node": "^26.5.0",
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1"
   }
 }

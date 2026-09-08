@@ -12,3 +12,6 @@ apache-jmeter-*/
 jmeter/results/*.jtl
 jmeter/results/*.log
 jmeter/report/
+
+# Postman
+postman/report/

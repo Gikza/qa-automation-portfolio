@@ -1,0 +1,35 @@
+name: Postman API Tests
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'postman/**'
+      - '.github/workflows/postman.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'postman/**'
+      - '.github/workflows/postman.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Install Newman
+      run: npm install -g newman newman-reporter-htmlextra
+    - name: Run collection
+      run: |
+        mkdir -p postman/report
+        newman run postman/collection.json -e postman/environment.json \
+          --reporters cli,htmlextra --reporter-htmlextra-export postman/report/report.html
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: postman-report
+        path: postman/report/
+        retention-days: 30

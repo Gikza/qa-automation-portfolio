@@ -2,11 +2,13 @@
 
 [![Playwright Tests](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/playwright.yml)
 [![JMeter Performance Tests](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/jmeter.yml/badge.svg)](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/jmeter.yml)
+[![Postman API Tests](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/postman.yml/badge.svg)](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/postman.yml)
 
 A collection of test suites covering the range of techniques used in real-world QA automation: end-to-end and API testing, data-driven testing, network mocking, accessibility scanning, visual regression, and performance testing — all running automatically on every push via GitHub Actions.
 
 - **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
 - **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
+- **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
 
 ## Playwright suite (`tests/`)
 
@@ -78,3 +80,9 @@ Every push and pull request to `main` runs the full suite across Chromium, Firef
 Five [Apache JMeter](https://jmeter.apache.org/) test plans — smoke, load, stress, spike, and a CRUD workflow — targeting the same JSONPlaceholder API covered functionally above, run non-GUI in CI on every push/PR that touches `jmeter/**`, with an HTML dashboard report and raw results uploaded as a build artifact.
 
 See [`jmeter/README.md`](jmeter/README.md) for the full breakdown, the CI error-rate gate, and notes on the design decisions.
+
+## API suite (`postman/`)
+
+A [Postman](https://www.postman.com/)/[Newman](https://github.com/postmanlabs/newman) collection targeting the same JSONPlaceholder API, run non-GUI in CI on every push/PR that touches `postman/**`. Covers the same core cases as the Playwright API suite plus JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables — the pieces that are Postman's home turf rather than Playwright's or JMeter's.
+
+See [`postman/README.md`](postman/README.md) for the full breakdown, including notes on using Postman's AI assistant to draft `pm.test()` blocks and schemas.
