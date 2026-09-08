@@ -1,0 +1,1 @@
+This is a sample file used by the file-handling.spec.ts test to verify uploads.
