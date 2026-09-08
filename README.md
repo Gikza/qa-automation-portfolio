@@ -1,17 +1,23 @@
 # QA Automation Portfolio
 
 [![Playwright Tests](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/playwright.yml)
+[![JMeter Performance Tests](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/jmeter.yml/badge.svg)](https://github.com/Gikza/qa-automation-portfolio/actions/workflows/jmeter.yml)
 
-A collection of end-to-end and API test suites built with [Playwright](https://playwright.dev/) and TypeScript, covering the range of techniques used in real-world QA automation: API testing, data-driven testing, network mocking, accessibility scanning, visual regression, and handling of dialogs, iframes, and file transfers — all running cross-browser (Chromium, Firefox, WebKit) on every push via GitHub Actions.
+A collection of test suites covering the range of techniques used in real-world QA automation: end-to-end and API testing, data-driven testing, network mocking, accessibility scanning, visual regression, and performance testing — all running automatically on every push via GitHub Actions.
 
-## Stack
+- **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
+- **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
+
+## Playwright suite (`tests/`)
+
+### Stack
 
 - [Playwright Test](https://playwright.dev/docs/intro) — test runner and browser automation
 - TypeScript
 - [@axe-core/playwright](https://github.com/dequelabs/axe-core-npm) — accessibility scanning
 - GitHub Actions — CI, cross-browser, on every push/PR
 
-## Getting started
+### Getting started
 
 ```bash
 npm install
@@ -32,7 +38,7 @@ View the HTML report after a run:
 npx playwright show-report
 ```
 
-## Test suite
+### Test suite
 
 | File | What it demonstrates |
 |---|---|
@@ -51,7 +57,7 @@ npx playwright show-report
 
 Most suites run against purpose-built practice sites ([SauceDemo](https://www.saucedemo.com/), [the-internet.herokuapp.com](https://the-internet.herokuapp.com/), [DemoQA](https://demoqa.com/), [JSONPlaceholder](https://jsonplaceholder.typicode.com/)) chosen for stability and to isolate the technique being demonstrated. `mercadolibre-search.spec.ts` is the exception: a real production site included on purpose to show handling of the messiness that comes with it (see below).
 
-## Notes from building this
+### Notes from building this
 
 A few real issues found and worked around along the way, kept here because they're more informative than a green checkmark:
 
@@ -61,8 +67,14 @@ A few real issues found and worked around along the way, kept here because they'
 - **Visual regression baselines are OS-specific.** Playwright namespaces screenshots by platform (`-win32.png` vs `-linux.png`) because font rendering differs between Windows and Linux. Baselines were generated locally on Windows for dev use and separately on Linux via a one-off `generate-snapshots.yml` GitHub Actions job (no Docker required) so CI has its own matching set.
 - **Third-party demo services have real-world limits.** The iframe test originally targeted [the-internet's TinyMCE editor demo](https://the-internet.herokuapp.com/iframe), but that shared free-tier API key had hit its monthly quota, putting the editor in read-only mode for everyone. Swapped for a nested-frames test that doesn't depend on an external service's quota.
 
-## CI
+### CI
 
 Every push and pull request to `main` runs the full suite across Chromium, Firefox, and WebKit via [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml). The HTML report is uploaded as a build artifact for 30 days.
 
 [`.github/workflows/generate-snapshots.yml`](.github/workflows/generate-snapshots.yml) is a manually-triggered (`workflow_dispatch`) job to regenerate Linux visual regression baselines from CI itself, for whenever the SauceDemo login page changes and there's no Docker available locally to reproduce Linux rendering.
+
+## Performance suite (`jmeter/`)
+
+Five [Apache JMeter](https://jmeter.apache.org/) test plans — smoke, load, stress, spike, and a CRUD workflow — targeting the same JSONPlaceholder API covered functionally above, run non-GUI in CI on every push/PR that touches `jmeter/**`, with an HTML dashboard report and raw results uploaded as a build artifact.
+
+See [`jmeter/README.md`](jmeter/README.md) for the full breakdown, the CI error-rate gate, and notes on the design decisions.

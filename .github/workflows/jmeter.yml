@@ -1,0 +1,62 @@
+name: JMeter Performance Tests
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'jmeter/**'
+      - '.github/workflows/jmeter.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'jmeter/**'
+      - '.github/workflows/jmeter.yml'
+  workflow_dispatch:
+env:
+  JMETER_VERSION: 5.6.3
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - name: Cache JMeter
+      id: cache-jmeter
+      uses: actions/cache@v4
+      with:
+        path: apache-jmeter-${{ env.JMETER_VERSION }}
+        key: jmeter-${{ env.JMETER_VERSION }}
+    - name: Download JMeter
+      if: steps.cache-jmeter.outputs.cache-hit != 'true'
+      run: |
+        wget -q "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz"
+        tar -xzf "apache-jmeter-${JMETER_VERSION}.tgz"
+    - name: Run test plans (non-GUI)
+      run: |
+        JMETER_BIN="apache-jmeter-${JMETER_VERSION}/bin/jmeter"
+        mkdir -p jmeter/results jmeter/report
+        status=0
+        for plan in jmeter/test-plans/*.jmx; do
+          name=$(basename "$plan" .jmx)
+          echo "::group::Running $name"
+          "$JMETER_BIN" -n -t "$plan" \
+            -l "jmeter/results/${name}.jtl" \
+            -j "jmeter/results/${name}.log" \
+            -e -o "jmeter/report/${name}" || status=1
+          echo "::endgroup::"
+        done
+        exit $status
+    - name: Check error thresholds
+      if: ${{ !cancelled() }}
+      run: python3 .github/scripts/check_jmeter_error_rate.py jmeter/results 5
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: jmeter-report
+        path: |
+          jmeter/report/
+          jmeter/results/
+        retention-days: 30

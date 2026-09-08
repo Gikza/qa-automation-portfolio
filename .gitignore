@@ -6,3 +6,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# JMeter
+apache-jmeter-*/
+jmeter/results/*.jtl
+jmeter/results/*.log
+jmeter/report/
