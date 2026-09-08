@@ -49,7 +49,7 @@ test('shows an empty state when the API returns no books', async ({ page }) => {
 test('surfaces a broken state when the API call fails', async ({ page }) => {
   await page.route(BOOKS_API, (route) => route.abort('failed'));
 
-  await page.goto('https://demoqa.com/books');
+  await page.goto('https://demoqa.com/books', { timeout: 60000 });
 
   // The book grid never receives data, so no book rows should ever render.
   await expect(page.getByText('Mocked Book Title For Testing')).toHaveCount(0);

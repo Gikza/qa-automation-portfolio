@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+// MercadoLibre's anti-bot system flags GitHub Actions' shared runner IPs as
+// suspicious traffic and serves a stripped-down page instead of real search
+// results, so this test only runs reliably from a residential/local IP.
+test.skip(!!process.env.CI, 'MercadoLibre blocks CI runner IPs as suspicious traffic');
+
 test('should search for "notebook" on MercadoLibre and show matching results', async ({ page }) => {
   await page.goto('https://www.mercadolibre.com.ar');
 
