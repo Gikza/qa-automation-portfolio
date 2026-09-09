@@ -12,6 +12,40 @@ A collection of test suites covering the range of techniques used in real-world 
 - **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
 - **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
 
+## Architecture
+
+One API, tested three different ways, all wired into the same CI pipeline:
+
+```mermaid
+flowchart LR
+    API[("JSONPlaceholder<br/>REST API")]
+
+    subgraph Suites["Same API, three angles"]
+        PW["Playwright<br/>E2E + API + a11y"]
+        JM["JMeter<br/>Load · Stress · Spike"]
+        PM["Postman/Newman<br/>Schema + Chained CRUD"]
+    end
+
+    CI["GitHub Actions<br/>on every push"]
+    Pages["GitHub Pages<br/>live HTML reports"]
+
+    API --> PW
+    API --> JM
+    API --> PM
+    PW --> CI
+    JM --> CI
+    PM --> CI
+    CI --> Pages
+```
+
+## Screenshots
+
+| Playwright | JMeter | Postman/Newman |
+|---|---|---|
+| [![Playwright report](docs/screenshots/playwright-report.png)](https://gikza.github.io/qa-automation-portfolio/playwright/) | [![JMeter report](docs/screenshots/jmeter-report.png)](https://gikza.github.io/qa-automation-portfolio/jmeter/) | [![Postman/Newman report](docs/screenshots/postman-report.png)](https://gikza.github.io/qa-automation-portfolio/postman/) |
+
+Click any screenshot to open the live report.
+
 ## Playwright suite (`tests/`)
 
 ### Stack
