@@ -11,6 +11,8 @@ on:
       - 'postman/**'
       - '.github/workflows/postman.yml'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   test:
     timeout-minutes: 15
@@ -26,10 +28,18 @@ jobs:
       run: |
         mkdir -p postman/report
         newman run postman/collection.json -e postman/environment.json \
-          --reporters cli,htmlextra --reporter-htmlextra-export postman/report/report.html
+          --reporters cli,htmlextra --reporter-htmlextra-export postman/report/index.html
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: postman-report
         path: postman/report/
         retention-days: 30
+    - name: Deploy report to GitHub Pages
+      if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: postman/report
+        destination_dir: postman
+        keep_files: true

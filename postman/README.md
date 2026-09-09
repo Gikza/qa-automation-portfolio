@@ -32,7 +32,7 @@ With the HTML report (matches CI):
 
 ```bash
 npx newman run postman/collection.json -e postman/environment.json \
-  --reporters cli,htmlextra --reporter-htmlextra-export postman/report/report.html
+  --reporters cli,htmlextra --reporter-htmlextra-export postman/report/index.html
 ```
 
 ## Test suite
@@ -58,4 +58,4 @@ Postman's AI Assistant can draft `pm.test()` blocks, JSON schemas, and negative-
 
 ## CI
 
-[`.github/workflows/postman.yml`](../.github/workflows/postman.yml) installs Newman, runs the collection against the JSONPlaceholder environment on every push/PR touching `postman/**`, and uploads the HTML report as a build artifact for 30 days.
+[`.github/workflows/postman.yml`](../.github/workflows/postman.yml) installs Newman, runs the collection against the JSONPlaceholder environment on every push/PR touching `postman/**`, and uploads the HTML report as a build artifact for 30 days. On pushes to `main`, it also publishes the report to GitHub Pages — see the [live report](https://gikza.github.io/qa-automation-portfolio/postman/).

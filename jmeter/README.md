@@ -53,4 +53,4 @@ A few real issues found while running these against the live API, kept here beca
 
 ## CI
 
-[`.github/workflows/jmeter.yml`](../.github/workflows/jmeter.yml) downloads (and caches) JMeter, runs all five `.jmx` plans non-GUI on every push/PR touching `jmeter/**`, generates an HTML dashboard per plan (`-e -o`), runs [`check_jmeter_error_rate.py`](../.github/scripts/check_jmeter_error_rate.py) against each plan's `.jtl` with a 5% error-rate threshold, and uploads the reports and raw results as a build artifact for 30 days.
+[`.github/workflows/jmeter.yml`](../.github/workflows/jmeter.yml) downloads (and caches) JMeter, runs all five `.jmx` plans non-GUI on every push/PR touching `jmeter/**`, generates an HTML dashboard per plan (`-e -o`), runs [`check_jmeter_error_rate.py`](../.github/scripts/check_jmeter_error_rate.py) against each plan's `.jtl` with a 5% error-rate threshold, and uploads the reports and raw results as a build artifact for 30 days. On pushes to `main`, it also publishes the dashboards to GitHub Pages — see the [live reports](https://gikza.github.io/qa-automation-portfolio/jmeter/).

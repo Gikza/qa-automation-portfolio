@@ -13,6 +13,8 @@ on:
   workflow_dispatch:
 env:
   JMETER_VERSION: 5.6.3
+permissions:
+  contents: write
 jobs:
   test:
     timeout-minutes: 30
@@ -52,6 +54,18 @@ jobs:
     - name: Check error thresholds
       if: ${{ !cancelled() }}
       run: python3 .github/scripts/check_jmeter_error_rate.py jmeter/results 5
+    - name: Build report index
+      if: ${{ !cancelled() }}
+      run: |
+        {
+          echo "<!doctype html><meta charset=utf-8><title>JMeter reports</title>"
+          echo "<h1>JMeter performance test reports</h1><ul>"
+          for dir in jmeter/report/*/; do
+            name=$(basename "$dir")
+            echo "<li><a href=\"${name}/\">${name}</a></li>"
+          done
+          echo "</ul>"
+        } > jmeter/report/index.html
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -60,3 +74,11 @@ jobs:
           jmeter/report/
           jmeter/results/
         retention-days: 30
+    - name: Deploy report to GitHub Pages
+      if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: jmeter/report
+        destination_dir: jmeter
+        keep_files: true

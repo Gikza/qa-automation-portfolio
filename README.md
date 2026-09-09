@@ -6,6 +6,8 @@
 
 A collection of test suites covering the range of techniques used in real-world QA automation: end-to-end and API testing, data-driven testing, network mocking, accessibility scanning, visual regression, and performance testing — all running automatically on every push via GitHub Actions.
 
+**[Live reports →](https://gikza.github.io/qa-automation-portfolio/)** — CI publishes the latest Playwright, JMeter, and Postman/Newman HTML reports to GitHub Pages on every push to `main`.
+
 - **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
 - **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
 - **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
@@ -71,7 +73,7 @@ A few real issues found and worked around along the way, kept here because they'
 
 ### CI
 
-Every push and pull request to `main` runs the full suite across Chromium, Firefox, and WebKit via [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml). The HTML report is uploaded as a build artifact for 30 days.
+Every push and pull request to `main` runs the full suite across Chromium, Firefox, and WebKit via [`.github/workflows/playwright.yml`](.github/workflows/playwright.yml). The HTML report is uploaded as a build artifact for 30 days, and on pushes to `main` it's also published to GitHub Pages — see the [live report](https://gikza.github.io/qa-automation-portfolio/playwright/).
 
 [`.github/workflows/generate-snapshots.yml`](.github/workflows/generate-snapshots.yml) is a manually-triggered (`workflow_dispatch`) job to regenerate Linux visual regression baselines from CI itself, for whenever the SauceDemo login page changes and there's no Docker available locally to reproduce Linux rendering.
 

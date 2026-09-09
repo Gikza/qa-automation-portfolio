@@ -1,0 +1,21 @@
+name: Deploy Pages landing page
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '.github/pages/**'
+      - '.github/workflows/pages-index.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy landing page to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .github/pages
+        keep_files: true

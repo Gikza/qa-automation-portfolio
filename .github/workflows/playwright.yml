@@ -4,6 +4,8 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+permissions:
+  contents: write
 jobs:
   test:
     timeout-minutes: 60
@@ -25,3 +27,11 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Deploy report to GitHub Pages
+      if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: playwright-report
+        destination_dir: playwright
+        keep_files: true
