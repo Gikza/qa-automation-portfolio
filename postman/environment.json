@@ -1,10 +1,10 @@
 {
   "id": "e4a9f3d0-2b6c-4a7e-8f1a-9c3d5e7b2a10",
-  "name": "JSONPlaceholder",
+  "name": "Local json-server",
   "values": [
     {
       "key": "baseUrl",
-      "value": "https://jsonplaceholder.typicode.com",
+      "value": "http://localhost:3001",
       "type": "default",
       "enabled": true
     }

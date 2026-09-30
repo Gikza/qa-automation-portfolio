@@ -9,13 +9,13 @@ A collection of test suites covering the range of techniques used in real-world 
 **[Live reports →](https://gikza.github.io/qa-automation-portfolio/)** — CI publishes the latest Playwright, JMeter, and Postman/Newman HTML reports to GitHub Pages on every push to `main`.
 
 - **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
-- **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting JSONPlaceholder (the Playwright API suite now runs against a local json-server, see [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2))
-- **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
+- **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting JSONPlaceholder (the Playwright and Postman API suites now run against a local json-server, see [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2))
+- **[`postman/`](postman/)** — a Postman/Newman collection targeting the same `/posts` endpoints on the local json-server, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
 - **[`claude-skills/`](claude-skills/)** — custom [Claude Code](https://claude.com/claude-code) skills that standardize everyday QA deliverables: PR descriptions, Gherkin test cases, and bug reports
 
 ## Architecture
 
-One API, tested three different ways, all wired into the same CI pipeline. The Playwright API tests now run against a local [json-server](https://github.com/typicode/json-server) with the same `/posts` endpoints, while JMeter and Postman still target JSONPlaceholder until [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2) is resolved:
+One API, tested three different ways, all wired into the same CI pipeline. The Playwright API tests and the Postman collection now run against a local [json-server](https://github.com/typicode/json-server) with the same `/posts` endpoints, while JMeter still targets JSONPlaceholder until [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2) is resolved:
 
 ```mermaid
 flowchart LR
@@ -32,8 +32,8 @@ flowchart LR
     Pages["GitHub Pages<br/>live HTML reports"]
 
     LOCAL -- API tests --> PW
+    LOCAL --> PM
     API --> JM
-    API --> PM
     PW --> CI
     JM --> CI
     PM --> CI
@@ -121,7 +121,7 @@ See [`jmeter/README.md`](jmeter/README.md) for the full breakdown, the CI error-
 
 ## API suite (`postman/`)
 
-A [Postman](https://www.postman.com/)/[Newman](https://github.com/postmanlabs/newman) collection targeting the same JSONPlaceholder API, run non-GUI in CI on every push/PR that touches `postman/**`. Covers the same core cases as the Playwright API suite plus JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables — the pieces that are Postman's home turf rather than Playwright's or JMeter's.
+A [Postman](https://www.postman.com/)/[Newman](https://github.com/postmanlabs/newman) collection targeting the same `/posts` endpoints, served by the local json-server, run non-GUI in CI on every push/PR that touches `postman/**`, `test-data/**` or the npm manifests. Locally and in CI it runs through `npm run test:postman:local`, which starts json-server with clean data, runs Newman, and stops the server. Covers the same core cases as the Playwright API suite plus JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables — the pieces that are Postman's home turf rather than Playwright's or JMeter's.
 
 See [`postman/README.md`](postman/README.md) for the full breakdown, including notes on using Postman's AI assistant to draft `pm.test()` blocks and schemas.
 

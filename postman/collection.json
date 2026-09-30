@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "b8f2e6b0-6c1a-4b3a-9d3e-1f5c2a7d4e10",
-    "name": "QA Automation Portfolio - JSONPlaceholder API",
-    "description": "Postman/Newman API test suite targeting the same JSONPlaceholder API covered functionally in ../tests/api-testing.spec.ts (Playwright) and under load in ../jmeter/. Adds JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables - the pieces that are awkward to express in Playwright/JMeter but are Postman's home turf.",
+    "name": "QA Automation Portfolio - Posts API",
+    "description": "Postman/Newman API test suite targeting the same /posts endpoints covered functionally in ../tests/api-testing.spec.ts (Playwright), served by a local json-server seeded from ../test-data/db.json (npm run api:mock). Adds JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables - the pieces that are awkward to express in Playwright/JMeter but are Postman's home turf.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -216,7 +216,7 @@
       "name": "CRUD Workflow",
       "item": [
         {
-          "name": "1. POST /posts - create (id is fabricated, not persisted)",
+          "name": "1. POST /posts - create",
           "event": [
             {
               "listen": "test",
@@ -250,7 +250,7 @@
           "response": []
         },
         {
-          "name": "2. GET /posts/1 - read (a post that actually exists)",
+          "name": "2. GET /posts/{{createdPostId}} - read the created post",
           "event": [
             {
               "listen": "test",
@@ -258,8 +258,10 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('status is 200', () => pm.response.to.have.status(200));",
-                  "pm.test('post exists and has an id', () => {",
-                  "    pm.expect(pm.response.json()).to.have.property('id', 1);",
+                  "pm.test('returns the post created in step 1', () => {",
+                  "    const post = pm.response.json();",
+                  "    pm.expect(post).to.have.property('id', Number(pm.collectionVariables.get('createdPostId')));",
+                  "    pm.expect(post.title).to.eql('CRUD workflow');",
                   "});"
                 ]
               }
@@ -269,15 +271,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/posts/1",
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["posts", "1"]
+              "path": ["posts", "{{createdPostId}}"]
             }
           },
           "response": []
         },
         {
-          "name": "3. PUT /posts/1 - update the existing post",
+          "name": "3. PUT /posts/{{createdPostId}} - update the created post",
           "event": [
             {
               "listen": "test",
@@ -299,19 +301,19 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": 1,\n  \"title\": \"Updated by CRUD workflow\",\n  \"body\": \"Updated in the workflow run\",\n  \"userId\": 1\n}",
+              "raw": "{\n  \"title\": \"Updated by CRUD workflow\",\n  \"body\": \"Updated in the workflow run\",\n  \"userId\": 1\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
-              "raw": "{{baseUrl}}/posts/1",
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["posts", "1"]
+              "path": ["posts", "{{createdPostId}}"]
             }
           },
           "response": []
         },
         {
-          "name": "4. DELETE /posts/{{createdPostId}} - the one verb that tolerates the fabricated id",
+          "name": "4. DELETE /posts/{{createdPostId}} - delete the created post",
           "event": [
             {
               "listen": "test",
@@ -325,6 +327,30 @@
           ],
           "request": {
             "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "{{createdPostId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. GET /posts/{{createdPostId}} - confirm the post is gone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404 after DELETE', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/posts/{{createdPostId}}",
