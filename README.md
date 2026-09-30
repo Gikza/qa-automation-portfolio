@@ -11,6 +11,7 @@ A collection of test suites covering the range of techniques used in real-world 
 - **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
 - **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
 - **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
+- **[`claude-skills/`](claude-skills/)** — custom [Claude Code](https://claude.com/claude-code) skills that standardize everyday QA deliverables: PR descriptions, Gherkin test cases, and bug reports
 
 ## Architecture
 
@@ -122,3 +123,13 @@ See [`jmeter/README.md`](jmeter/README.md) for the full breakdown, the CI error-
 A [Postman](https://www.postman.com/)/[Newman](https://github.com/postmanlabs/newman) collection targeting the same JSONPlaceholder API, run non-GUI in CI on every push/PR that touches `postman/**`. Covers the same core cases as the Playwright API suite plus JSON schema validation, response-time assertions, and a chained CRUD workflow using collection variables — the pieces that are Postman's home turf rather than Playwright's or JMeter's.
 
 See [`postman/README.md`](postman/README.md) for the full breakdown, including notes on using Postman's AI assistant to draft `pm.test()` blocks and schemas.
+
+## AI-Assisted QA (`claude-skills/`)
+
+Three custom [Claude Code](https://claude.com/claude-code) skills that standardize everyday QA deliverables, written in Spanish for the teams I work with:
+
+- **`pr-description`** — writes the PR description with testing steps, and flags test quality issues: empty tests, missing `expect`, `.only`/`.skip`, hard waits
+- **`gherkin-cases`** — turns a user story into Gherkin scenarios covering the happy path, negative cases, and boundary values, with tags and a coverage table
+- **`bug-report`** — writes reproducible, Jira-ready bug reports with justified severity and suggested regression tests, asking for missing data instead of inventing it
+
+See [`claude-skills/README.md`](claude-skills/README.md) for installation, an example output, and the design principles behind them.
