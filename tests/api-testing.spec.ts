@@ -1,8 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
+// Local json-server started by playwright.config.ts (webServer), seeded from test-data/db.json.
+const BASE_URL = 'http://localhost:3001';
 
 test.describe('Posts API', () => {
+  // POST and DELETE change the server's data, so run in file order in a single worker.
+  test.describe.configure({ mode: 'default' });
+
   test('GET /posts returns a full list of posts', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/posts`);
     expect(response.status()).toBe(200);

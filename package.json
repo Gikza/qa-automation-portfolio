@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "api:mock": "node -e \"require('fs').copyFileSync('test-data/db.json','test-data/db.runtime.json')\" && json-server test-data/db.runtime.json --port 3001",
     "test:postman": "newman run postman/collection.json -e postman/environment.json --reporters cli,htmlextra --reporter-htmlextra-export postman/report/index.html"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.5.0",
+    "json-server": "0.17.4",
     "newman": "^6.2.1",
     "newman-reporter-htmlextra": "^1.23.1"
   }

@@ -9,19 +9,20 @@ A collection of test suites covering the range of techniques used in real-world 
 **[Live reports →](https://gikza.github.io/qa-automation-portfolio/)** — CI publishes the latest Playwright, JMeter, and Postman/Newman HTML reports to GitHub Pages on every push to `main`.
 
 - **[`tests/`](tests/)** — end-to-end and API tests built with [Playwright](https://playwright.dev/) and TypeScript, cross-browser (Chromium, Firefox, WebKit)
-- **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting the same API covered functionally in `tests/api-testing.spec.ts`
+- **[`jmeter/`](jmeter/)** — load, stress, spike, and CRUD-workflow performance tests built with [Apache JMeter](https://jmeter.apache.org/), targeting JSONPlaceholder (the Playwright API suite now runs against a local json-server, see [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2))
 - **[`postman/`](postman/)** — a Postman/Newman collection targeting the same API, covering JSON schema validation, response-time assertions, and a chained CRUD workflow, with notes on using Postman's AI assistant to draft tests
 - **[`claude-skills/`](claude-skills/)** — custom [Claude Code](https://claude.com/claude-code) skills that standardize everyday QA deliverables: PR descriptions, Gherkin test cases, and bug reports
 
 ## Architecture
 
-One API, tested three different ways, all wired into the same CI pipeline:
+One API, tested three different ways, all wired into the same CI pipeline. The Playwright API tests now run against a local [json-server](https://github.com/typicode/json-server) with the same `/posts` endpoints, while JMeter and Postman still target JSONPlaceholder until [#2](https://github.com/Gikza/qa-automation-portfolio/issues/2) is resolved:
 
 ```mermaid
 flowchart LR
     API[("JSONPlaceholder<br/>REST API")]
+    LOCAL[("Local json-server<br/>seeded from test-data/db.json")]
 
-    subgraph Suites["Same API, three angles"]
+    subgraph Suites["Same /posts endpoints, three angles"]
         PW["Playwright<br/>E2E + API + a11y"]
         JM["JMeter<br/>Load · Stress · Spike"]
         PM["Postman/Newman<br/>Schema + Chained CRUD"]
@@ -30,7 +31,7 @@ flowchart LR
     CI["GitHub Actions<br/>on every push"]
     Pages["GitHub Pages<br/>live HTML reports"]
 
-    API --> PW
+    LOCAL -- API tests --> PW
     API --> JM
     API --> PM
     PW --> CI
@@ -81,7 +82,7 @@ npx playwright show-report
 
 | File | What it demonstrates |
 |---|---|
-| [`api-testing.spec.ts`](tests/api-testing.spec.ts) | REST API testing (GET/POST/DELETE, status codes, response shape) against JSONPlaceholder |
+| [`api-testing.spec.ts`](tests/api-testing.spec.ts) | REST API testing (GET/POST/DELETE, status codes, response shape) against a local [json-server](https://github.com/typicode/json-server) started by Playwright's `webServer`, seeded from [`test-data/db.json`](test-data/db.json) |
 | [`login-data-driven.spec.ts`](tests/login-data-driven.spec.ts) | Data-driven tests looping over a table of valid/invalid login cases |
 | [`e2e-checkout-flow.spec.ts`](tests/e2e-checkout-flow.spec.ts) | Full E2E flow: login → cart → checkout → order confirmation, with total validation |
 | [`network-mocking.spec.ts`](tests/network-mocking.spec.ts) | Intercepting and mocking API responses (`page.route`) to test success, empty, and error states without hitting the real backend |
