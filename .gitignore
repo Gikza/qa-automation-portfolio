@@ -15,3 +15,6 @@ jmeter/report/
 
 # Postman
 postman/report/
+
+# json-server runtime copy (seed: test-data/db.json)
+test-data/db.runtime.json

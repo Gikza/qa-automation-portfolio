@@ -34,18 +34,27 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    /* API tests don't use a browser: run them once, against the local json-server. */
+    {
+      name: 'api',
+      testMatch: /api-testing\.spec\.ts/,
+    },
+
     {
       name: 'chromium',
+      testIgnore: /api-testing\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
 
     {
       name: 'firefox',
+      testIgnore: /api-testing\.spec\.ts/,
       use: { ...devices['Desktop Firefox'] },
     },
 
     {
       name: 'webkit',
+      testIgnore: /api-testing\.spec\.ts/,
       use: { ...devices['Desktop Safari'] },
     },
 
@@ -70,10 +79,11 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  /* Local json-server for the API tests. It serves a fresh copy of test-data/db.json on every run,
+     and is never reused, so each run starts from clean data. */
+  webServer: {
+    command: 'npm run api:mock',
+    url: 'http://localhost:3001/posts',
+    reuseExistingServer: false,
+  },
 });
