@@ -4,11 +4,17 @@ on:
     branches: [ main, master ]
     paths:
       - 'jmeter/**'
+      - 'test-data/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/jmeter.yml'
   pull_request:
     branches: [ main, master ]
     paths:
       - 'jmeter/**'
+      - 'test-data/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/jmeter.yml'
   workflow_dispatch:
 env:
@@ -25,6 +31,11 @@ jobs:
       with:
         distribution: temurin
         java-version: '17'
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies (json-server, start-server-and-test)
+      run: npm ci
     - name: Cache JMeter
       id: cache-jmeter
       uses: actions/cache@v4
@@ -36,7 +47,7 @@ jobs:
       run: |
         wget -q "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz"
         tar -xzf "apache-jmeter-${JMETER_VERSION}.tgz"
-    - name: Run test plans (non-GUI)
+    - name: Run test plans (non-GUI), each against a fresh json-server
       run: |
         JMETER_BIN="apache-jmeter-${JMETER_VERSION}/bin/jmeter"
         mkdir -p jmeter/results jmeter/report
@@ -44,10 +55,10 @@ jobs:
         for plan in jmeter/test-plans/*.jmx; do
           name=$(basename "$plan" .jmx)
           echo "::group::Running $name"
-          "$JMETER_BIN" -n -t "$plan" \
-            -l "jmeter/results/${name}.jtl" \
-            -j "jmeter/results/${name}.log" \
-            -e -o "jmeter/report/${name}" || status=1
+          # api:mock starts json-server from a clean copy of test-data/db.json;
+          # start-server-and-test waits for it, runs JMeter, then stops it.
+          npx start-server-and-test api:mock http://localhost:3001/posts \
+            "$JMETER_BIN -n -t $plan -l jmeter/results/${name}.jtl -j jmeter/results/${name}.log -e -o jmeter/report/${name}" || status=1
           echo "::endgroup::"
         done
         exit $status
